@@ -127,7 +127,7 @@ jobs:
               repo: context.repo.repo,
               tag_name: '${{ needs.preparation.outputs.new_release_name }}',
               name: '${{ needs.preparation.outputs.new_release_name }}',
-              body: '${{ needs.preparation.outputs.new_release_body }}'
+              body: `${{ needs.preparation.outputs.new_release_body }}`
             }
             await github.rest.repos.createRelease(params)
 
