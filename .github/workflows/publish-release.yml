@@ -41,7 +41,7 @@ jobs:
             github.hook.error("request", async (error, options) => {
               if (error.status === 404) {
                 return {
-                  data: {tag_name: 'not found'}
+                  data: {tag_name: "not found"}
                 }
               }
               throw error
