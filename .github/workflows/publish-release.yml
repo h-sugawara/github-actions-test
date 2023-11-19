@@ -40,7 +40,7 @@ jobs:
           script: |
             github.hook.error("request", async (error, options) => {
               if (error.status === 404) {
-                return ''
+                return {tag_name: ''}
               }
               throw error
             });
