@@ -57,7 +57,7 @@ jobs:
         if: steps.merged_pr.outputs.status == 'yes'
         id: new_release
         run: |
-          milestone=$(echo '${{ toJSON(github.event.pull_request.milestone) }}' | jq - c)
+          milestone=$(echo '${{ toJSON(github.event.pull_request.milestone) }}' | jq -c)
           
           if [[ "$(echo "${milestone}" | jq -r '.title')" =~ ^v[0-9]\.[0-9]+\.[0-9]+$ ]] && [ ${#BASH_REMATCH[@]} -gt 0 ]; then
             echo "name=$(echo "${milestone}" | jq -r '.title')" >> $GITHUB_OUTPUT
