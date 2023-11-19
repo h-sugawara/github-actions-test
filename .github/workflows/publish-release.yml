@@ -58,8 +58,8 @@ jobs:
         if: steps.merged_pr.outputs.status == 'yes'
         id: new_release
         run: |
-          milestone=$(echo '${{ toJSON(github.event.pull_request.milestone) }}' | jq -c)
-          
+          milestone=$(echo '${{ toJSON(github.event.pull_request.milestone) }}' | jq -r)
+
           if [[ "$(echo "${milestone}" | jq -r '.title')" =~ ^v[0-9]\.[0-9]+\.[0-9]+$ ]] && [ ${#BASH_REMATCH[@]} -gt 0 ]; then
             echo "name=$(echo "${milestone}" | jq -r '.title')" >> $GITHUB_OUTPUT
           elif [[ "${{ steps.latest_release_tag.outputs.result }}" =~ ^v[0-9]\.[0-9]+\.[0-9]+$ ]] && [ ${#BASH_REMATCH[@]} -gt 0 ]; then
@@ -70,8 +70,8 @@ jobs:
 
           milestone_desc=$(echo "${milestone}" | jq -r '.description')
           if [ "${milestone_desc}" != "null" ] && [ -n "${milestone_desc}" ]; then
-            lf=$'\n'
             delimiter="$(openssl rand -hex 8)"
+            lf=$'\n'
             echo "body<<${delimiter}{lf}${milestone_desc}${lf}${delimiter}" >> $GITHUB_OUTPUT
           fi
 
