@@ -72,7 +72,7 @@ jobs:
           if [ "${milestone_desc}" != "null" ] && [ -n "${milestone_desc}" ]; then
             delimiter="$(openssl rand -hex 8)"
             lf=$'\n'
-            echo "body<<${delimiter}{lf}${milestone_desc}${lf}${delimiter}" >> $GITHUB_OUTPUT
+            echo "body<<${delimiter}${lf}${milestone_desc}${lf}${delimiter}" >> $GITHUB_OUTPUT
           fi
 
       - name: Set up a new milestone
