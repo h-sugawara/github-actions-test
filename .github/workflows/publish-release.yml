@@ -38,7 +38,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            github.hook.error("getLatestRelease", async (error, options) => {
+            github.hook.error("request", async (error, options) => {
               if (error.status === 404) {
                 return {
                   data: {tag_name: ''}
