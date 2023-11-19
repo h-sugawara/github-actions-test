@@ -1,0 +1,22 @@
+name: Pull request events debugger
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+
+jobs:
+  event_debug:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Dump event contents
+        run: |
+          echo '${{ toJSON(github) }}'
