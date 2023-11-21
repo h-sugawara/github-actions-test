@@ -65,15 +65,10 @@ jobs:
       - name: Summarize result
         id: summarize
         run: |
-          all_steps='${{ toJSON(fromJSON(steps.*)) }}'
+          outcomes="{}"
+          outcomes=$(echo "${outcomes}" | jq --argjson kv_pair "{\"lint\":\"${{ steps.lint.outcome }}\"}" '. + $kv_pair')
+          outcomes=$(echo "${outcomes}" | jq --argjson kv_pair "{\"test\":\"${{ steps.test.outcome }}\"}" '. + $kv_pair')
 
-          outcomes="{}"          
-          for step_key in $(echo "${all_steps}" | jq -r 'keys[]'); do
-            step_value=$(echo "${all_steps}" | jq -r --arg key "${step_key}" '.[$key]')
-            if "$(echo "${step_value}" | jq -r 'has("outcome")')"; then
-              outcomes=$(echo "${outcomes}" | jq --argjson kv_pair "{\"${step_key}\":\"$(echo "${step_value}" | jq -r '.outcome')\"}" '. + $kv_pair')
-            fi
-          done
           echo "outcomes=$(echo "${outcomes}" | jq -c)" >> $GITHUB_OUTPUT
 
           if "$(echo "${outcomes}" | jq -r '[values[] == ("failure")] | any')"; then
