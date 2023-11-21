@@ -65,7 +65,7 @@ jobs:
       - name: Summarize result
         id: summarize
         run: |
-          all_steps='${{ toJSON(fromJSON(step)) }}'
+          all_steps='${{ toJSON(fromJSON(steps)) }}'
 
           outcomes="{}"          
           for step_key in $(echo "${all_steps}" | jq -r 'keys[]'); do
