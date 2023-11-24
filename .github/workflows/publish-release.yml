@@ -135,7 +135,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: '${{ needs.preparation.outputs.new_milestone_title }}'
-              description: `${{ needs.preparation.outputs.new_milestone_description }}`
+              description: '${{ needs.preparation.outputs.new_milestone_description }}'
             }
             await github.rest.issues.createMilestone(params)
 
