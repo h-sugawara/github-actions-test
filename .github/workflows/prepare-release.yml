@@ -176,7 +176,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number,
-              review_id: '${{ steps.approval_commit.outputs.sha }}'
+              review_id: '${{ steps.approval_commit.outputs.sha }}',
               message: 'cancel approval review'
             }
             await github.rest.pulls.dismissReview(params)
