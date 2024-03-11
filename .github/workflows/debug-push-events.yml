@@ -1,0 +1,23 @@
+name: Push events debugger
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+    tags:
+      - 'api-**'
+    paths:
+      - 'src/**'
+
+jobs:
+  event_debug:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Dump event contents
+        env:
+          GITHUB_EVENTS_JSON: ${{ toJSON(github) }}
+        run: |
+          echo "${{ env.GITHUB_EVENTS_JSON }}"
