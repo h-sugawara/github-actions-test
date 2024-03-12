@@ -21,3 +21,34 @@ jobs:
           GITHUB_EVENTS_JSON: ${{ toJSON(github) }}
         run: |
           echo "${{ env.GITHUB_EVENTS_JSON }}"
+
+  branches_and_paths_or_tags_and_paths:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check event trigger enabled
+        id: event_trigger
+        uses: actions/github-script@v7
+        env:
+          PATHS: 'src/'
+        with:
+          script: |
+            const { GITHUB_REF_TYPE, PATHS } = process.env
+            const { tree } = await github.rest.git.getTree({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tree_sha: context.payload.commits.tree_id,
+            })
+            const ret = { enabled: false }
+            if (['branch','tag'].includes(GITHUB_REF_TYPE)) {
+              for (const { path } of tree) {
+                if (path.startsWith(PATHS)) {
+                  ret.enabled = true
+                  break
+                }
+              }
+            }
+            return ret
+
+      - name: Dump event contents
+        run: |
+          echo "${{ fromJSON(steps.event_trigger.outputs.result).enabled }}"
