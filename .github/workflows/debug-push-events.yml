@@ -41,7 +41,7 @@ jobs:
             const { tree } = await github.rest.git.getTree({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tree_sha: context.payload.commits[0].tree_id,
+              tree_sha: context.payload.head_commit.tree_id,
             })
             const ret = { enabled: false }
             if (['branch','tag'].includes(GITHUB_REF_TYPE)) {
