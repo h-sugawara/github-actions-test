@@ -22,6 +22,11 @@ jobs:
         run: |
           echo "${{ env.GITHUB_EVENTS_JSON }}"
 
+      - name: View context attributes
+        uses: actions/github-script@v7
+        with:
+          script: console.log(context)
+
   branches_and_paths_or_tags_and_paths:
     runs-on: ubuntu-latest
     steps:
