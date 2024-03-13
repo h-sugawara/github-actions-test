@@ -42,30 +42,29 @@ jobs:
   branches_and_paths_or_tags_and_paths:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
       - name: Check event trigger enabled
         id: event_trigger
-        uses: actions/github-script@v7
         env:
           PATHS: 'src/'
-        with:
-          script: |
-            const { GITHUB_REF_TYPE, PATHS } = process.env
-            const { data: { tree } } = await github.rest.git.getTree({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tree_sha: context.payload.head_commit.tree_id,
-            })
-            const ret = { enabled: false }
-            if (['branch','tag'].includes(GITHUB_REF_TYPE)) {
-              for (const { path } of tree) {
-                if (path.startsWith(PATHS)) {
-                  ret.enabled = true
-                  break
-                }
-              }
-            }
-            return ret
-
-      - name: Dump event contents
         run: |
-          echo "${{ fromJSON(steps.event_trigger.outputs.result).enabled }}"
+          git checkout HEAD^ --quiet
+          files=$(jq -n '$ARGS.positional' --args -- $(git show --pretty='' --name-only "${{ github.sha }}"))
+          if "$(jq -n -r --argjson files "${files}" --argjson filter "${{ env.PATHS }}" 'isempty($files[]|select(startswith($filter)))')"; then
+            echo "enabled=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "enabled=true" >> $GITHUB_OUTPUT
+          case "${{ github.ref_type }}" in
+            "branch") echo "name=branch_and_path" >> $GITHUB_OUTPUT ;;
+            "tag") echo "name=tag_and_path" >> $GITHUB_OUTPUT ;;
+          esac
+
+      - name: Debug event trigger
+        run: |
+          echo "Event trigger enabled: ${{ steps.event_trigger.outputs.enabled }}"
+          echo "Event trigger name: ${{ steps.event_trigger.outputs.name }}"
